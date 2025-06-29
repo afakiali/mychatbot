@@ -1,11 +1,4 @@
-
 {
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/chatbot-backend/api/$1"
-    }
-  ],
   "builds": [
     {
       "src": "chatbot-frontend/package.json",
