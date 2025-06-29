@@ -1,4 +1,4 @@
-// chatbot-frontend/src/components/ChatWidget.js
+// mychatbot/chatbot-frontend/src/components/ChatWidget.js
 
 import React, { useState, useEffect, useRef } from 'react';
 import './ChatWidget.css'; // تأكد من استيراد ملف CSS هذا
@@ -73,8 +73,14 @@ function ChatWidget() {
                 currentPayloadMessages[currentPayloadMessages.length - 1].content += ` (ملف مرفق: ${selectedFile.name})`;
             }
 
-            // إرسال سجل المحادثة الكامل إلى نقطة نهاية /chat في الخادم الخلفي
-            const response = await fetch('http://localhost:5000/chat', {
+            // ***** التعديل هنا: استخدام متغير البيئة لـ Vercel *****
+            // VERCEL_URL هو متغير بيئة توفره Vercel تلقائياً.
+            // نضيف إليه '/api/chat' للوصول إلى Serverless Function
+            // 'http://localhost:5000' هو للتشغيل المحلي إذا لم يكن NEXT_PUBLIC_VERCEL_URL متاحاً
+            const BASE_API_URL = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:5000'; // تأكد من أن منفذ 5000 هو الصحيح محلياً
+
+            // إرسال سجل المحادثة الكامل إلى نقطة نهاية /api/chat في الخادم الخلفي (Serverless Function)
+            const response = await fetch(`${BASE_API_URL}/api/chat`, { // <-- تم التعديل هنا
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

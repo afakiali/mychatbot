@@ -1,20 +1,24 @@
 {
   "name": "chatbot-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend API for chatbot using OpenAI and Express",
+  "main": "api/chat.js",
   "scripts": {
-    "start": "node server.js",
-    "heroku-postbuild": "cd ../chatbot-frontend && npm install && npm run build"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "chatbot",
+    "openai",
+    "node.js",
+    "express"
+  ],
+  "author": "Your Name",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^5.1.0",
-    "fuse.js": "^7.1.0",
-    "openai": "^5.0.0"
+    "express": "^4.19.2",
+    "fuse.js": "^7.0.0",
+    "openai": "^4.47.1"
   }
 }

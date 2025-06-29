@@ -1,0 +1,33 @@
+// mychatbot/vercel.json
+
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/chatbot-backend/api/$1"
+    }
+  ],
+  "builds": [
+    {
+      "src": "chatbot-frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
+      "src": "chatbot-backend/api/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/chatbot-backend/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/chatbot-frontend/build/$1"
+    }
+  ]
+}
