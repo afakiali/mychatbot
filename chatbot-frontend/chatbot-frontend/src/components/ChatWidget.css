@@ -1,0 +1,460 @@
+/* chatbot-frontend/src/components/ChatWidget.css */
+
+/* --- أنماط الجسم العامة للوضع الليلي --- */
+body.dark-mode {
+  background-color: #222;
+  color: #eee;
+}
+
+/* --- زر التبديل العائم (الشعار) --- */
+.chat-toggle-button {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #4CAF50; /* لون أخضر جذاب لشعار البوت */
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* لجعل الزر دائريًا */
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); /* ظل أنيق */
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in-out; /* انتقال سلس عند التفاعل */
+  z-index: 1000; /* التأكد من أنه فوق المحتوى الآخر */
+  /* تصميم الشعار المريح والجذاب */
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(241, 241, 241, 0.918); /* ظل للنص داخل الزر */
+  background-image: linear-gradient(135deg, #1035dd 0%, #2816c9 100%); /* تدرج لوني يعطيه مظهراً فاخراً */
+}
+
+.chat-toggle-button:hover {
+  background-color: #388E3C;
+  transform: scale(1.05); /* تكبير طفيف عند التمرير */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35); /* ظل أعمق عند التمرير */
+}
+.chat-toggle-button span {
+    font-size: 1.5em; /* تكبير أيقونة الدردشة قليلاً داخل الزر */
+}
+
+
+/* --- حاوية ودجت الدردشة الرئيسية --- */
+.chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 380px; /* عرض قياسي لويدجت الدردشة */
+  height: 550px; /* ارتفاع قياسي */
+  background-color: #fff; /* خلفية بيضاء افتراضية */
+  border-radius: 15px; /* حواف أكثر استدارة لمظهر فاخر */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); /* ظل أعمق وأكثر فخامة */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* لإخفاء أي محتوى يتجاوز الحدود */
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* رسوم متحركة نابضة لفتح/إغلاق الودجت */
+  transform: scale(0); /* مخفية في البداية (بحجم صفر) */
+  transform-origin: bottom right; /* نقطة الأصل للتحويل (النمو من أسفل اليمين) */
+  z-index: 999; /* التأكد من أنها فوق معظم المحتوى */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* خط أكثر احترافية ووضوحاً */
+}
+
+.chat-widget.open {
+  transform: scale(1); /* تظهر بحجمها الطبيعي */
+}
+
+.chat-widget.closed {
+  transform: scale(0); /* تصبح بحجم صفر (مخفية) */
+}
+
+/* --- الوضع الليلي للودجت --- */
+.chat-widget.dark-mode {
+  background-color: #2b2b2b; /* خلفية داكنة للودجت في الوضع الليلي */
+  color: #eee; /* لون نص فاتح */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* ظل أغمق */
+}
+.chat-widget.dark-mode .chat-header {
+  background-image: linear-gradient(135deg, #1a1a1a 0%, #333 100%); /* تدرج داكن للرأس */
+  border-bottom: 1px solid #444; /* حدود أغمق */
+}
+.chat-widget.dark-mode .chat-input-area {
+  background-color: #333; /* خلفية داكنة لمنطقة الإدخال */
+  border-top: 1px solid #444; /* حدود أغمق */
+}
+.chat-widget.dark-mode .chat-input-area input {
+  background-color: #444; /* خلفية داكنة لمربع الإدخال */
+  color: #eee; /* نص فاتح */
+  border-color: #555; /* حدود أغمق */
+}
+/* ألوان الفقاعات في الوضع الليلي */
+.chat-widget.dark-mode .message-bubble.bot {
+  background-color: #444; /* لون البوت في الوضع الليلي */
+  color: #eee;
+}
+.chat-widget.dark-mode .message-bubble.bot::after { /* مثلث البوت في الوضع الليلي */
+  border-right-color: #444;
+  border-bottom-color: #444;
+}
+.chat-widget.dark-mode .message-bubble.user {
+  background-color: #004d99; /* لون أزرق داكن للمستخدم في الوضع الليلي */
+  color: white;
+}
+.chat-widget.dark-mode .message-bubble.user::after { /* مثلث المستخدم في الوضع الليلي */
+  border-left-color: #004d99;
+  border-bottom-color: #004d99;
+}
+.chat-widget.dark-mode .file-preview {
+    background-color: #444;
+    border-top: 1px solid #555;
+    color: #eee;
+}
+.chat-widget.dark-mode .upload-button {
+    background-color: #444;
+    border-color: #555;
+    color: #bbb;
+}
+.chat-widget.dark-mode .upload-button:hover {
+    background-color: #555;
+}
+
+
+/* --- رأس الدردشة (الشريط الأزرق العلوي) --- */
+.chat-header {
+  background-image: linear-gradient(to right, #007bff 0%, #0056b3 100%); /* تدرج لوني أزرق أنيق */
+  color: white;
+  padding: 10px 20px; /* تم تقليل الـ padding العلوي والسفلي لجعله أضيق */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600; /* خط أثقل قليلاً */
+  font-size: 1.1em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* حدود فاصلة */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* ظل خفيف للرأس */
+}
+
+.bot-name {
+  flex-grow: 1; /* يسمح لاسم البوت بأخذ المساحة المتاحة */
+  text-align: left; /* محاذاة النص لليسار */
+  font-size: 1.25em; /* حجم أكبر قليلاً لاسم البوت */
+  display: flex; /* لتمكين وضع زر الحالة بجانبه */
+  align-items: center;
+  gap: 8px; /* مسافة بين الاسم وزر الحالة */
+}
+
+/* زر الحالة المتصل (النقطة الخضراء) */
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%; /* لجعلها دائرية */
+  background-color: #4CAF50; /* أخضر للإشارة إلى متصل */
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.4); /* ظل خفيف حول النقطة */
+}
+
+.header-icons {
+  display: flex;
+  gap: 5px; /* مسافة أقل بين الأيقونات */
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.3em; /* حجم أكبر للأيقونات */
+  cursor: pointer;
+  padding: 8px; /* مساحة داخلية أكبر لجعلها أسهل للنقر */
+  border-radius: 50%; /* لجعل الأزرار دائرية */
+  transition: background-color 0.2s ease, transform 0.2s ease; /* انتقالات سلسة */
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1); /* تكبير طفيف عند التمرير */
+}
+
+.close-button {
+  font-size: 1.8em; /* حجم أكبر لزر الإغلاق */
+  line-height: 1; /* لضبط المحاذاة العمودية لـ 'x' */
+  font-weight: 300; /* خط أخف للـ 'x' */
+}
+
+/* --- منطقة المحادثة --- */
+.chat-conversation-area {
+  flex-grow: 1; /* تسمح للمنطقة بأخذ المساحة المتاحة */
+  padding: 15px;
+  overflow-y: auto; /* لتمكين التمرير إذا كان المحتوى يتجاوز */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* مسافة بين فقاعات الرسائل */
+  background-color: #fcfcfc; /* خلفية فاتحة جدًا للتباين */
+  scroll-behavior: smooth; /* تمرير سلس */
+  font-size: 0.9em;
+}
+.chat-widget.dark-mode .chat-conversation-area {
+  background-color: #3b3b3b; /* خلفية داكنة في الوضع الليلي */
+}
+
+
+/* --- فقاعات الرسائل --- */
+.message-bubble {
+  padding: 12px 18px; /* مساحة داخلية أكبر */
+  border-radius: 22px; /* فقاعات أكثر استدارة */
+  max-width: 80%; /* تحديد أقصى عرض للفقاعة */
+  word-wrap: break-word; /* تسمح بكسر الكلمات الطويلة */
+  font-size: 0.95em;
+  line-height: 1.5; /* تباعد أسطر أفضل */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* ظل خفيف */
+  position: relative; /* للمثلث الصغير */
+}
+
+/* اتجاه النص العربي */
+/* هذه الفئة تُطبق على الـ <div> الخارجية التي تحتوي على النص في renderMessageContent */
+.message-bubble .rtl-text {
+  direction: rtl; /* اتجاه النص من اليمين لليسار */
+  text-align: right; /* محاذاة النص لليمين */
+  line-height: 1.7; /* تحسين تباعد الأسطر للنص العربي */
+}
+
+/* نمط للكلمات الأجنبية/اللاتينية داخل النص العربي */
+/* هذا النمط سيُطبق على عناصر <bdi> */
+.message-bubble .ltr-part {
+  /* dir="ltr" يتم تعيينه مباشرة في HTML بواسطة React */
+  text-align: left; /* محاذاة النص داخل هذا العنصر */
+  display: inline-block; /* مهم لتمكين تغيير الاتجاه */
+  white-space: normal; /* السماح للكلمات الطويلة بالالتفاف داخل العنصر */
+  /* إذا كنت ترى فجوات كبيرة بين الكلمات العربية والأجنبية، جرب إضافة: */
+  /* margin: 0 0.2em; */
+}
+
+/* نمط خاص للعناصر المرقمة (مثل "1. ", "2. ") */
+/* هذا النمط سيُطبق على عناصر <bdi> إذا كانت رقماً مرقماً */
+.message-bubble .numbered-item {
+  color: #009688; /* لون أخضر مختلف للأرقام */
+  font-weight: bold; /* جعل الأرقام أكثر وضوحًا */
+  /* dir="ltr" يتم تعيينه مباشرة في HTML بواسطة React */
+  text-align: left; /* لمحاذاة الرقم إلى اليسار */
+  display: inline-block; /* مهم لضبط الاتجاه والهوامش */
+  margin-right: 5px; /* مسافة بعد الرقم */
+}
+
+
+/* ألوان رسائل المستخدم - أزرق دائمًا */
+.message-bubble.user {
+  align-self: flex-end; /* لمحاذاة الفقاعة لليمين */
+  background-color: #007bff; /* أزرق */
+  color: white;
+  border-bottom-right-radius: 8px; /* حافة مستديرة أقل قليلاً */
+}
+/* مثلث رسالة المستخدم */
+.message-bubble.user::after {
+  content: '';
+  position: absolute;
+  right: -8px; /* ضبط الموضع */
+  bottom: 0px; /* ضبط الموضع */
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-left-color: #007bff; /* لون الأزرق */
+  border-bottom-color: #007bff; /* لون الأزرق */
+  border-right: 0; /* إزالة الحدود الأخرى */
+  border-top: 0;
+  z-index: 1; /* فوق الفقاعة قليلاً */
+}
+/* الوضع الليلي لرسالة المستخدم */
+.chat-widget.dark-mode .message-bubble.user {
+  background-color: #004d99; /* أزرق داكن */
+  color: white;
+}
+.chat-widget.dark-mode .message-bubble.user::after {
+  border-left-color: #004d99;
+  border-bottom-color: #004d99;
+}
+
+
+/* ألوان رسائل البوت - أبيض/رمادي فاتح دائمًا */
+.message-bubble.bot {
+  align-self: flex-start; /* لمحاذاة الفقاعة لليسار */
+  background-color: #f1f0f0; /* رمادي فاتح */
+  color: #333;
+  border-bottom-left-radius: 8px; /* حافة مستديرة أقل قليلاً */
+}
+/* مثلث رسالة البوت */
+.message-bubble.bot::after {
+  content: '';
+  position: absolute;
+  left: -8px; /* ضبط الموضع */
+  bottom: 0px; /* ضبط الموضع */
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-right-color: #f1f0f0; /* لون الرمادي الفاتح */
+  border-bottom-color: #f1f0f0; /* لون الرمادي الفاتح */
+  border-left: 0; /* إزالة الحدود الأخرى */
+  border-top: 0;
+  z-index: 1; /* فوق الفقاعة قليلاً */
+}
+/* الوضع الليلي لرسالة البوت */
+.chat-widget.dark-mode .message-bubble.bot {
+  background-color: #444; /* رمادي داكن */
+  color: #eee;
+}
+.chat-widget.dark-mode .message-bubble.bot::after {
+  border-right-color: #444;
+  border-bottom-color: #444;
+}
+
+
+.message-bubble.loading {
+  font-style: italic;
+  color: #666;
+  background-color: #e0e0e0;
+}
+.chat-widget.dark-mode .message-bubble.loading {
+  background-color: #555;
+  color: #bbb;
+}
+
+.message-bubble .attachment-info {
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+}
+.chat-widget.dark-mode .message-bubble .attachment-info {
+    color: #bbb;
+}
+
+
+/* --- منطقة إدخال الرسائل --- */
+.chat-input-area {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+  align-items: center;
+  direction: rtl; /* لجعل زر الإرسال على اليسار ومربع الإدخال على اليمين */
+}
+
+.chat-input-area input {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  margin-right: 0; /* إزالة الهامش الأيمن */
+  margin-left: 10px; /* إضافة هامش أيسر لزر الإرسال */
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  direction: rtl; /* لضمان كتابة النص من اليمين لليسار */
+  text-align: right; /* لمحاذاة النص لليمين */
+}
+
+.chat-input-area input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.chat-input-area button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.chat-input-area button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.chat-input-area button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* زر تحميل الملفات */
+.upload-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 10px; /* نقل الهامش إلى اليسار */
+  margin-right: 0;
+  color: #555;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+.chat-widget.dark-mode .upload-button {
+    background-color: #444;
+    border-color: #555;
+    color: #bbb;
+}
+
+.upload-button:hover {
+  background-color: #e0e0e0;
+}
+.chat-widget.dark-mode .upload-button:hover {
+    background-color: #555;
+}
+
+/* معاينة الملف المختار */
+.file-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.9em;
+    color: #555;
+    direction: rtl; /* لضمان الترتيب الصحيح في المعاينة */
+}
+
+.file-preview span {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+.file-preview .clear-file-button {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+.file-preview .clear-file-button:hover {
+    color: #c00;
+}
+
+/* التعديلات المتجاوبة (لتناسب الشاشات الصغيرة) */
+@media (max-width: 600px) {
+  .chat-widget {
+    width: 95vw;
+    height: 90vh;
+    bottom: 2.5vw;
+    right: 2.5vw;
+    border-radius: 10px;
+  }
+  .chat-toggle-button {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    bottom: 20px;
+    right: 20px;
+  }
+}

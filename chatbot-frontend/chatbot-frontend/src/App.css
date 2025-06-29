@@ -1,0 +1,358 @@
+/* General Body and App Layout */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #e9ecef; /* لون خلفية ناعم */
+    overflow: hidden; /* لمنع شريط التمرير للصفحة بالكامل */
+}
+
+.App {
+    display: flex;
+    justify-content: flex-end; /* لدفع البوت إلى اليمين */
+    align-items: flex-end; /* لدفع البوت إلى الأسفل */
+    min-height: 100vh;
+    width: 100vw;
+    position: relative; /* لجعل عناصر البوت تطفو فوقه */
+    padding: 20px; /* مسافة من حواف الشاشة */
+    box-sizing: border-box;
+    /* ألوان الوضع الفاتح الافتراضية */
+    --bg-color: #e9ecef;
+    --widget-bg: #ffffff;
+    --chat-history-bg: #f8f9fa;
+    --user-bubble-bg: #e6f7ff;
+    --bot-bubble-bg: #f0f0f0;
+    --text-color: #333;
+    --input-bg: #f9f9f9;
+    --input-border: #ddd;
+    --header-gradient-start: #007bff;
+    --header-gradient-end: #0056b3;
+    --button-primary-bg: #007bff;
+    --button-primary-hover: #0056b3;
+    --send-button-bg: #28a745;
+    --send-button-hover: #218838;
+}
+
+/* Dark Mode Styles */
+.App.dark-mode {
+    --bg-color: #2c2f33; /* خلفية داكنة */
+    --widget-bg: #36393f; /* خلفية النافذة داكنة */
+    --chat-history-bg: #3e4147;
+    --user-bubble-bg: #4a6792; /* فقاعة المستخدم داكنة أكثر */
+    --bot-bubble-bg: #44474c; /* فقاعة البوت داكنة أكثر */
+    --text-color: #e0e0e0; /* نص فاتح */
+    --input-bg: #3e4147;
+    --input-border: #555;
+    --header-gradient-start: #1a1a2e; /* تدرج داكن للرأس */
+    --header-gradient-end: #0f0f1c;
+    --button-primary-bg: #4a6792;
+    --button-primary-hover: #3a5070;
+    --send-button-bg: #218838;
+    --send-button-hover: #1a6d2c;
+}
+
+body {
+    background-color: var(--bg-color);
+    transition: background-color 0.3s ease; /* انسيابية في تغيير الخلفية */
+}
+
+/* Chat Open Button (زر الفتح) */
+.chat-open-button {
+    background-color: var(--button-primary-bg);
+    color: white;
+    border: none;
+    border-radius: 50px; /* شكل دائري */
+    padding: 15px 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: fixed; /* لتثبيت الزر */
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000; /* ليكون فوق كل شيء */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.chat-open-button:hover {
+    background-color: var(--button-primary-hover);
+    transform: translateY(-3px); /* تأثير بسيط عند التحويم */
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
+
+.chat-open-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Chat Widget (نافذة الدردشة الرئيسية) */
+.chat-widget {
+    background-color: var(--widget-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    width: 380px; /* عرض ثابت */
+    height: 550px; /* ارتفاع ثابت */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: fixed; /* لتثبيت النافذة */
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* حركة سلسة */
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto; /* للسماح بالتفاعل */
+    color: var(--text-color);
+}
+
+.chat-widget.closed {
+    transform: translateY(100px) scale(0.8); /* أخفِ وقم بتصغير النافذة */
+    opacity: 0;
+    pointer-events: none; /* لمنع التفاعل عندما تكون مغلقة */
+}
+
+/* Chat Header (رأس الدردشة) */
+.chat-header {
+    background-image: linear-gradient(to right, var(--header-gradient-start), var(--header-gradient-end));
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* لتحديد موضع عناصر الأزرار */
+}
+
+.header-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.bot-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.4em;
+}
+
+/* Status Indicator (نقطة الاتصال) */
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #f0f0f0; /* رمادي افتراضي */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.status-indicator.online {
+    background-color: #28a745; /* أخضر للاتصال */
+    box-shadow: 0 0 5px #28a745, 0 0 10px rgba(40, 167, 69, 0.6); /* تأثير الوهج */
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+    margin-right: 10px;
+    transition: transform 0.2s ease;
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+.chat-close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+    transition: transform 0.2s ease;
+}
+
+.chat-close-button:hover {
+    transform: rotate(90deg);
+}
+
+/* Chat Container (الجسم الرئيسي للدردشة) */
+.chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    overflow: hidden;
+    background-color: var(--chat-history-bg); /* خلفية سجل الدردشة */
+}
+
+/* Chat History (سجل الدردشة) */
+.chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 10px; /* مسافة لشريط التمرير */
+    margin-bottom: 10px;
+}
+
+/* Scrollbar Styles */
+.chat-history::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-history::-webkit-scrollbar-track {
+    background: var(--chat-history-bg); /* لون مسار شريط التمرير */
+    border-radius: 10px;
+}
+.chat-history::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.chat-history::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Chat Message (رسالة فردية) */
+.chat-message {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.chat-message.user {
+    justify-content: flex-end; /* رسالة المستخدم على اليمين */
+}
+
+.chat-message.bot {
+    justify-content: flex-start; /* رسالة البوت على اليسار */
+}
+
+/* Message Bubble (فقاعة الرسالة) */
+.message-bubble {
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.5;
+    font-size: 0.95em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message.user .message-bubble {
+    background-color: var(--user-bubble-bg);
+    color: var(--text-color);
+    border-bottom-right-radius: 5px; /* حافة مربعة قليلاً في الزاوية السفلى اليمنى للمستخدم */
+}
+
+.chat-message.bot .message-bubble {
+    background-color: var(--bot-bubble-bg);
+    color: var(--text-color);
+    border-bottom-left-radius: 5px; /* حافة مربعة قليلاً في الزاوية السفلى اليسرى للبوت */
+}
+
+.sender-name {
+    font-weight: bold;
+    margin-right: 5px;
+    color: var(--button-primary-bg); /* لون اسم المستخدم */
+}
+
+.chat-message.bot .sender-name {
+    color: var(--send-button-bg); /* لون اسم البوت */
+}
+
+.chat-message.loading .message-bubble {
+    font-style: italic;
+    color: #666;
+    background-color: var(--bot-bubble-bg); /* استخدم لون فقاعة البوت */
+    padding: 12px 20px;
+}
+
+/* Chat Input (منطقة الإدخال) */
+.chat-input {
+    display: flex;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    gap: 10px; /* مسافة بين الإدخال والزر */
+    background-color: var(--widget-bg); /* لضمان تطابق الخلفية في الوضع الليلي */
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: 1px solid var(--input-border);
+    border-radius: 25px; /* حواف دائرية */
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+.chat-input input:focus {
+    border-color: var(--button-primary-bg);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.chat-input button {
+    padding: 12px 25px;
+    background-color: var(--send-button-bg);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.chat-input button:hover {
+    background-color: var(--send-button-hover);
+    transform: translateY(-2px);
+}
+
+.chat-input button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 600px) {
+    .App {
+        padding: 0;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .chat-widget {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        bottom: 0;
+        right: 0;
+        box-shadow: none;
+    }
+
+    .chat-open-button {
+        bottom: 20px;
+        right: 20px;
+        font-size: 1em;
+        padding: 12px 20px;
+    }
+}
