@@ -1,8 +1,8 @@
 {
   "name": "chatbot-backend",
   "version": "1.0.0",
-  "description": "Backend API for chatbot using OpenAI and Express",
-  "main": "api/chat.js",
+  "description": "Backend API and static file server for chatbot using OpenAI and Express",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },

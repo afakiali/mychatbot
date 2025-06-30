@@ -1,7 +1,7 @@
 // mychatbot/chatbot-frontend/src/components/ChatWidget.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import './ChatWidget.css'; // تأكد من استيراد ملف CSS هذا
+import './ChatWidget.css';
 
 function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,90 +11,72 @@ function ChatWidget() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
 
-    const conversationEndRef = useRef(null); // مرجع للتمرير إلى أسفل المحادثة
+    const conversationEndRef = useRef(null);
 
-    // التمرير التلقائي إلى أسفل المحادثة عند إضافة رسالة جديدة
     useEffect(() => {
         if (conversationEndRef.current) {
             conversationEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [conversation]);
 
-    // تبديل فئة 'dark-mode' على عنصر <body> للتحكم في الوضع الليلي
     useEffect(() => {
         document.body.classList.toggle('dark-mode', isDarkMode);
     }, [isDarkMode]);
 
-    // وظيفة لتبديل فتح/إغلاق نافذة الدردشة
     const toggleChat = () => {
         setIsOpen(!isOpen);
     };
 
-    // وظيفة لتبديل الوضع الليلي/النهاري
     const toggleDarkMode = () => {
         setIsDarkMode(!isDarkMode);
     };
 
-    // وظيفة للتعامل مع تغيير الملف المختار (لتحميل الصور/الملفات)
     const handleFileChange = (event) => {
         const file = event.target.files && event.target.files.length > 0 ? event.target.files[0] : null;
         if (file) {
             setSelectedFile(file);
             console.log("تم اختيار الملف:", file.name);
-            // ملاحظة: معالجة الملفات (مثل إرسالها إلى الخلفية) تتطلب منطقًا إضافيًا
         }
     };
 
-    // وظيفة لإرسال الرسالة إلى الخادم الخلفي
     const sendMessage = async (e) => {
-        e.preventDefault(); // منع إعادة تحميل الصفحة الافتراضية للنموذج
+        e.preventDefault();
 
-        if (!message.trim() && !selectedFile) return; // لا ترسل إذا كانت الرسالة فارغة ولا يوجد ملف
+        if (!message.trim() && !selectedFile) return;
 
-        // أضف رسالة المستخدم إلى المحادثة للعرض الفوري
         const userMessage = { text: message.trim(), sender: 'user', file: selectedFile ? selectedFile.name : null };
-        // سجل المحادثة الجديد الذي سيُرسل إلى الخلفية
         const newConversation = [...conversation, userMessage];
-        setConversation(newConversation); // تحديث حالة المحادثة في الواجهة الأمامية
+        setConversation(newConversation);
 
-        setIsLoading(true); // ابدأ مؤشر التحميل
+        setIsLoading(true);
 
         try {
-            // تحويل سجل المحادثة إلى تنسيق OpenAI (دور ومحتوى)
-            // هذا الجزء هو الحل لمشكلة "الرسائل مطلوبة" ولتشغيل الذاكرة
             let currentPayloadMessages = newConversation.map(msg => ({
-                role: msg.sender === 'user' ? 'user' : 'assistant', // 'user' أو 'assistant'
-                content: msg.text // محتوى الرسالة
+                role: msg.sender === 'user' ? 'user' : 'assistant',
+                content: msg.text
             }));
 
-            // إذا كان هناك ملف، أضف اسمه إلى الرسالة الأخيرة في الـ payload
             if (selectedFile) {
-                // نعدل آخر رسالة في سجل المحادثة (التي هي رسالة المستخدم الحالية)
                 currentPayloadMessages[currentPayloadMessages.length - 1].content += ` (ملف مرفق: ${selectedFile.name})`;
             }
 
-            // ***** التعديل هنا: استخدام متغير البيئة لـ Vercel *****
-            // VERCEL_URL هو متغير بيئة توفره Vercel تلقائياً.
-            // نضيف إليه '/api/chat' للوصول إلى Serverless Function
-            // 'http://localhost:5000' هو للتشغيل المحلي إذا لم يكن NEXT_PUBLIC_VERCEL_URL متاحاً
-            const BASE_API_URL = process.env.NEXT_PUBLIC_VERCEL_URL || 'http://localhost:5000'; // تأكد من أن منفذ 5000 هو الصحيح محلياً
+            // ***** التعديل هنا: استخدام مسار نسبي للاتصال بنفس الخادم *****
+            // لا نحتاج لمتغيرات بيئة خاصة بالـ URL هنا لأن الخادم يقدم كل شيء
+            const API_ENDPOINT = '/chat'; // المسار إلى API الخاص بالدردشة على خادمك Node.js
 
-            // إرسال سجل المحادثة الكامل إلى نقطة نهاية /api/chat في الخادم الخلفي (Serverless Function)
-            const response = await fetch(`${BASE_API_URL}/api/chat`, { // <-- تم التعديل هنا
+            const response = await fetch(API_ENDPOINT, { // <-- تم التعديل هنا
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ messages: currentPayloadMessages }), // نرسل مصفوفة الرسائل كاملة
+                body: JSON.stringify({ messages: currentPayloadMessages }),
             });
 
             if (!response.ok) {
-                // التعامل مع الأخطاء من الخادم (مثل 500 Internal Server Error)
                 const errorData = await response.json();
                 throw new Error(errorData.error || `خطأ HTTP! الحالة: ${response.status}`);
             }
 
-            // استلام رد البوت وإضافته إلى المحادثة
             const data = await response.json();
             const botResponse = { text: data.response, sender: 'bot' };
             setConversation((prevConv) => [...prevConv, botResponse]);
@@ -102,37 +84,26 @@ function ChatWidget() {
         } catch (error) {
             console.error('خطأ في إرسال الرسالة:', error);
             const errorMessage = { text: `حدث خطأ: ${error.message}. يرجى المحاولة مرة أخرى.`, sender: 'bot-error' };
-            setConversation((prevConv) => [...prevConv, errorMessage]); // عرض رسالة خطأ للمستخدم
+            setConversation((prevConv) => [...prevConv, errorMessage]);
         } finally {
-            setIsLoading(false); // إخفاء مؤشر التحميل
-            setMessage(''); // مسح مربع الإدخال
-            setSelectedFile(null); // مسح الملف المختار
+            setIsLoading(false);
+            setMessage('');
+            setSelectedFile(null);
         }
     };
 
-    // دالة مساعدة لعرض محتوى الرسالة، مع تنسيق الأسطر والأرقام
-    // هذه الدالة هي التي تحتوي على الحل لعدم قلب الكتابة الأجنبية الذي يعمل لديك
     const renderMessageContent = (text, sender) => {
-        // تقسيم النص إلى أسطر
         const lines = text.split('\n');
-
         return (
-            // تعيين اتجاه النص بناءً على المرسل
             <div className={sender === 'user' ? 'rtl-text user-message-content' : 'rtl-text bot-message-content'}>
                 {lines.map((line, index) => {
-                    // تقسيم كل سطر للبحث عن العناصر المرقمة (مثل "1. ", "2. ")
-                    // regex: (\d+\.\s+) يلتقط رقمًا متبوعًا بنقطة ومسافة
                     const parts = line.split(/(\d+\.\s+)/);
                     return (
-                        // كل سطر في فقرة خاصة به لضمان تنظيم الأسطر
                         <p key={index} style={{ margin: '5px 0' }}>
                             {parts.map((part, partIndex) => {
-                                // إذا كان الجزء يطابق نمط الرقم، أعطه فئة خاصة (لتلوينه)
-                                if (part.match(/^\d+\.\s+/)) { // يجب أن يبدأ الجزء برقم
+                                if (part.match(/^\d+\.\s+/)) {
                                     return <span key={partIndex} className="numbered-item">{part}</span>;
                                 } else {
-                                    // إذا لم يكن رقمًا، حاول تحديد اتجاهه
-                                    // هذا الجزء يساعد في معالجة الكلمات الأجنبية داخل النص العربي
                                     const isLikelyEnglish = /[a-zA-Z]/.test(part) && !/[\u0600-\u06FF]/.test(part);
                                     return (
                                         <span key={partIndex} className={isLikelyEnglish ? 'ltr-inline' : ''}>
@@ -150,38 +121,29 @@ function ChatWidget() {
 
     return (
         <>
-            {/* زر التبديل العائم (الشعار) - يظهر عندما تكون نافذة الدردشة مغلقة */}
             {!isOpen && (
                 <button className="chat-toggle-button closed" onClick={toggleChat} title="افتح الدردشة">
                     <span role="img" aria-label="chat-icon">💬</span>
                 </button>
             )}
-
-            {/* حاوية ودجت الدردشة الرئيسية - تظهر عندما تكون مفتوحة */}
             <div className={`chat-widget ${isOpen ? 'open' : 'closed'} ${isDarkMode ? 'dark-mode' : ''}`}>
                 <div className="chat-header">
                     <span className="bot-name">
                         GPT PRO
-                        {/* زر الحالة المتصل - يظهر بجانب اسم البوت */}
                         <div className="status-indicator online" title="متصل"></div>
                     </span>
                     <div className="header-icons">
-                        {/* زر تبديل الوضع الليلي/النهاري */}
                         <button className="icon-button" onClick={toggleDarkMode} title="تبديل الوضع الليلي">
                             {isDarkMode ? '☀️' : '🌙'}
                         </button>
-                        {/* زر إغلاق نافذة الدردشة */}
                         <button className="icon-button close-button" onClick={toggleChat} title="إغلاق الدردشة">
                             &times;
                         </button>
                     </div>
                 </div>
-
-                {/* منطقة عرض المحادثة */}
                 <div className="chat-conversation-area">
                     {conversation.map((msg, index) => (
                         <div key={index} className={`message-bubble ${msg.sender}`}>
-                            {/* استخدام دالة renderMessageContent لتنسيق الرسائل */}
                             {renderMessageContent(msg.text, msg.sender)}
                             {msg.file && <div className="attachment-info">📄 {msg.file}</div>}
                         </div>
@@ -191,32 +153,27 @@ function ChatWidget() {
                             جارٍ التفكير...
                         </div>
                     )}
-                    <div ref={conversationEndRef} /> {/* عنصر فارغ للتمرير التلقائي */}
+                    <div ref={conversationEndRef} />
                 </div>
-
-                {/* منطقة إدخال الرسائل والأزرار */}
                 <form onSubmit={sendMessage} className="chat-input-area">
-                    {/* زر تحميل الملفات */}
                     <label htmlFor="file-upload" className="upload-button" title="إرفاق ملف">
                         📎
                         <input
                             id="file-upload"
                             type="file"
                             onChange={handleFileChange}
-                            style={{ display: 'none' }} // إخفاء زر الإدخال الأصلي للملفات
+                            style={{ display: 'none' }}
                             disabled={isLoading}
                         />
                     </label>
-                    {/* مربع إدخال النص */}
                     <input
                         type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder={selectedFile ? selectedFile.name : "اكتب رسالتك هنا..."}
                         disabled={isLoading}
-                        readOnly={!!selectedFile} // جعل للقراءة فقط إذا تم اختيار ملف
+                        readOnly={!!selectedFile}
                     />
-                    {/* زر إرسال الرسالة */}
                     <button type="submit" disabled={isLoading}>
                         إرسال
                     </button>
