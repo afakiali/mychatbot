@@ -7,7 +7,6 @@ chatbot-frontend/node_modules/
 
 # تجاهل ملفات البناء للفرونتند
 chatbot-frontend/dist/
-chatbot-frontend/build/
 
 # تجاهل ملفات النظام
 .DS_Store
